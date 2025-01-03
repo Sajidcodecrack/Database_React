@@ -26,11 +26,25 @@ db.connect((err) => {
 
 app.post('/login', (req, res) => {
   const { email, password } = req.body;
-  const query = 'INSERT INTO login_db (email, password) VALUES (?, ?)';
+  const query = 'SELECT * FROM login_db WHERE email = ? AND password = ?';
 
   db.query(query, [email, password], (err, result) => {
     if (err) throw err;
-    res.json({ success: true, message: 'User logged in' });
+    if (result.length > 0) {
+      res.json({ success: true, message: 'User login successful' });
+    } else {
+      res.json({ success: false, message: 'Invalid email or password' });
+    }
+  });
+});
+
+app.post('/register', (req, res) => {
+  const { name, email, age, password } = req.body;
+  const query = 'INSERT INTO registration_db (name, email, age, password) VALUES (?, ?, ?, ?)';
+
+  db.query(query, [name, email, age, password], (err, result) => {
+    if (err) throw err;
+    res.json({ success: true, message: 'User registration successful' });
   });
 });
 
